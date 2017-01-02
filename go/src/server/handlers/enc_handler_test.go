@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"compress/gzip"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -13,16 +14,15 @@ import (
 var handler http.Handler
 
 func TestMain(m *testing.M) {
-	tempDir, err := ioutil.TempDir("", "enc_handler_test")
-	if err != nil {
-		panic(err)
-	}
+	tempDir, _ := ioutil.TempDir("", "enc_handler_test")
 	defer os.RemoveAll(tempDir) // clean up
 	tempFile := filepath.Join(tempDir, "tmp.html")
-	err = ioutil.WriteFile(tempFile, []byte("test"), 0666)
-	if err != nil {
-		panic(err)
-	}
+	ioutil.WriteFile(tempFile, []byte("test"), 0666)
+	fp, _ := os.Create(filepath.Join(tempDir, "tmp2.html.gz"))
+	gzipWriter := gzip.NewWriter(fp)
+	gzipWriter.Write([]byte("test2"))
+	gzipWriter.Close()
+	fp.Close()
 	handler = EncHandler(tempDir)
 	os.Exit(m.Run())
 }
@@ -40,4 +40,25 @@ func TestServeEncFilesAcceptFallback(t *testing.T) {
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, request)
 	testingutils.ExpectSuccess(t, 200, "test", response)
+}
+
+func TestServeEncFilesAcceptGzip(t *testing.T) {
+	request := httptest.NewRequest("GET", "/tmp2.html", nil)
+	request.Header.Set("Accept-Encoding", "gzip")
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response, request)
+	if response.Code != http.StatusOK {
+		t.Errorf("Response code %d != %d", response.Code, http.StatusOK)
+	}
+	gzipReader, err := gzip.NewReader(response.Body)
+	if err != nil {
+		t.Errorf("Error unzipping response: %s", err)
+	}
+	content, err := ioutil.ReadAll(gzipReader)
+	if err != nil {
+		t.Errorf("Error unzipping response: %s", err)
+	}
+	if string(content) != "test2" {
+		t.Errorf("Response %s != test2", content)
+	}
 }
