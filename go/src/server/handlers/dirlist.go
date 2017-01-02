@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"server/middleware"
+	"strings"
 )
 
 // Handler which responds with a JSON array of all file names in baseFilepath and its subdirectories.
@@ -17,7 +18,7 @@ func DirListHandler(baseFilepath http.Dir) http.Handler {
 				return err
 			}
 			if path != string(baseFilepath) {
-				contents = append(contents, path)
+				contents = append(contents, strings.TrimPrefix(path, string(baseFilepath)))
 			}
 			return nil
 		}))
