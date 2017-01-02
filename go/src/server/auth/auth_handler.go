@@ -1,9 +1,8 @@
-package handlers
+package auth
 
 import (
-	"server/auth"
-	"server/middleware"
 	"net/http"
+	"server/middleware"
 )
 
 func challenge(w http.ResponseWriter, role string) {
@@ -13,7 +12,7 @@ func challenge(w http.ResponseWriter, role string) {
 
 func AuthHandler(role string, handler http.Handler) http.Handler {
 	return middleware.LoggedHandler(func(w http.ResponseWriter, req *http.Request) error {
-		username, err := auth.CheckAuthCookie(req)
+		username, err := CheckAuthCookie(req)
 		if err != nil {
 			username, password, ok := req.BasicAuth()
 			if !ok {
@@ -21,7 +20,7 @@ func AuthHandler(role string, handler http.Handler) http.Handler {
 				return nil
 			}
 
-			ok, err = auth.CheckPassword(username, password)
+			ok, err = CheckPassword(username, password)
 			if err != nil {
 				return err
 			}
@@ -30,12 +29,12 @@ func AuthHandler(role string, handler http.Handler) http.Handler {
 				return nil
 			}
 
-			auth.SetAuthCookie(w, username)
+			SetAuthCookie(w, username)
 			handler.ServeHTTP(w, req)
 			return nil
 		}
 
-		roles, err := auth.GetRoles(username)
+		roles, err := GetRoles(username)
 		if err != nil {
 			return err
 		}
