@@ -26,8 +26,9 @@ func ServeEncFile(w http.ResponseWriter, req *http.Request, filename string) {
 				if encoding == accept {
 					w.Header().Set("Content-Encoding", encoding)
 					w.Header().Set("Content-Type", mime.TypeByExtension(filepath.Ext(filename)))
-					ServeFile(w, req, filename+extensions[encoding])
-					return
+					if MaybeServeFile(w, req, filename+extensions[encoding]) {
+						return
+					}
 				}
 			}
 		}

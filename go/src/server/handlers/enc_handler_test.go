@@ -33,3 +33,11 @@ func TestServeEncFilesNoAccept(t *testing.T) {
 	handler.ServeHTTP(response, request)
 	testingutils.ExpectSuccess(t, 200, "test", response)
 }
+
+func TestServeEncFilesAcceptFallback(t *testing.T) {
+	request := httptest.NewRequest("GET", "/tmp.html", nil)
+	request.Header.Set("Accept-Encoding", "gzip")
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response, request)
+	testingutils.ExpectSuccess(t, 200, "test", response)
+}
