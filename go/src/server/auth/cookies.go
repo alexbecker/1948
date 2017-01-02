@@ -9,8 +9,6 @@ import (
 	"strings"
 )
 
-const minKeyLen = 16
-
 func SignCookie(cookie *http.Cookie) {
 	sigBytes := hmac.New(sha256.New, secretKey).Sum([]byte(cookie.Value))
 	sig := base64.StdEncoding.EncodeToString(sigBytes)

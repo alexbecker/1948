@@ -5,6 +5,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const minKeyLen = 16
+
 var (
 	db        *sql.DB
 	salt      []byte
