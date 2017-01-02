@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"server/middleware"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"server/middleware"
 )
 
 func UploadHandler(baseFilepath http.Dir, methods map[string]bool, overwrite bool) http.Handler {
@@ -64,7 +64,6 @@ func UploadHandler(baseFilepath http.Dir, methods map[string]bool, overwrite boo
 			}
 
 			w.WriteHeader(http.StatusNoContent)
-			w.Write([]byte("File " + path + " deleted"))
 		}
 
 		return nil
