@@ -19,10 +19,10 @@ func HandleUploadPage(mux *http.ServeMux, path, role, page string, baseDir http.
 	mux.Handle(path+"/", dirHandler)
 
 	dirListHandler := handlers.DirListHandler(baseDir)
-	dirListHandler = handlers.AuthHandler(role, dirListHandler)
+	dirListHandler = auth.AuthHandler(role, dirListHandler)
 	mux.Handle(path, dirListHandler)
 
 	pageHandler := handlers.SingleEncFileHandler(page)
-	pageHandler = handlers.AuthHandler(role, pageHandler)
+	pageHandler = auth.AuthHandler(role, pageHandler)
 	mux.Handle(path+".html", pageHandler)
 }
