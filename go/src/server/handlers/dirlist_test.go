@@ -1,12 +1,34 @@
 package handlers
 
 import (
+	"io/ioutil"
+	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
 func TestListing(t *testing.T) {
-	handler := DirListHandler("example_dir")
+	tempDir, err := ioutil.TempDir("", "dirlist_test")
+	if err != nil {
+		panic(err)
+	}
+	defer os.RemoveAll(tempDir) // clean up
+	_, err = os.Create(filepath.Join(tempDir, "a"))
+	if err != nil {
+		panic(err)
+	}
+	err = os.Mkdir(filepath.Join(tempDir, "b"), os.ModeDir|os.ModePerm)
+	if err != nil {
+		panic(err)
+	}
+	_, err = os.Create(filepath.Join(tempDir, "b", "c"))
+	if err != nil {
+		panic(err)
+	}
+
+	handler := DirListHandler(http.Dir(tempDir))
 	request := httptest.NewRequest("GET", "/", nil)
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, request)
@@ -14,7 +36,7 @@ func TestListing(t *testing.T) {
 		t.Errorf("Response code %d != 200", response.Code)
 	}
 	responseString := response.Body.String()
-	expectedResponseString := "[\"example_dir/a\",\"example_dir/b\",\"example_dir/b/c\"]"
+	expectedResponseString := `["/a","/b","/b/c"]`
 	if responseString != expectedResponseString {
 		t.Errorf("Response %s != %s", responseString, expectedResponseString)
 	}
