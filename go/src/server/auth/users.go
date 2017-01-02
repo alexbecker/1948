@@ -13,8 +13,10 @@ import (
 const hardness = 10000
 
 var (
-	db   *sql.DB
-	salt []byte
+	db           *sql.DB
+	salt         []byte
+	mockUsername string
+	mockRoles    map[string]bool
 )
 
 func init() {
@@ -124,6 +126,10 @@ func getRoles(seen map[int]bool, roles map[string]bool, id int) error {
 }
 
 func GetRoles(username string) (map[string]bool, error) {
+	if mockUsername != "" && username == mockUsername {
+		return mockRoles, nil
+	}
+
 	seen := make(map[int]bool)
 	roles := make(map[string]bool)
 
@@ -184,4 +190,9 @@ func PrintUsers() error {
 	}
 
 	return nil
+}
+
+func SetMockUser(name string, roles map[string]bool) {
+	mockUsername = name
+	mockRoles = roles
 }
