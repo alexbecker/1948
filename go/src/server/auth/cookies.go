@@ -6,27 +6,13 @@ import (
 	"encoding/base64"
 	"errors"
 	"net/http"
-	"os"
 	"strings"
 )
 
 const minKeyLen = 16
 
-var secretKey []byte
-
-func getSecretKey() []byte {
-	if secretKey != nil {
-		return secretKey
-	}
-	secretKey = []byte(os.Getenv("SECRET"))
-	if len(secretKey) < minKeyLen {
-		panic("SECRET absent or too short!")
-	}
-	return secretKey
-}
-
 func SignCookie(cookie *http.Cookie) {
-	sigBytes := hmac.New(sha256.New, getSecretKey()).Sum([]byte(cookie.Value))
+	sigBytes := hmac.New(sha256.New, secretKey).Sum([]byte(cookie.Value))
 	sig := base64.StdEncoding.EncodeToString(sigBytes)
 	cookie.Value += "." + sig
 }
@@ -44,7 +30,7 @@ func DecodeCookie(cookie *http.Cookie) (string, error) {
 		return value, err
 	}
 
-	sig2 := hmac.New(sha256.New, getSecretKey()).Sum([]byte(value))
+	sig2 := hmac.New(sha256.New, secretKey).Sum([]byte(value))
 
 	if !hmac.Equal(sig, sig2) {
 		return value, errors.New("Signature mismatch")

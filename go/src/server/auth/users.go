@@ -7,29 +7,9 @@ import (
 	"encoding/base64"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
-	"os"
 )
 
 const hardness = 10000
-
-var (
-	db           *sql.DB
-	salt         []byte
-	mockUsername string
-	mockRoles    map[string]bool
-)
-
-func init() {
-	dbName := os.Getenv("DATABASE")
-
-	var err error
-	db, err = sql.Open("sqlite3", dbName)
-	if err != nil {
-		panic(err)
-	}
-
-	salt = []byte(os.Getenv("SALT"))
-}
 
 func hash(username, password string) string {
 	input := make([]byte, len(salt))
@@ -108,6 +88,9 @@ func getRoles(seen map[int]bool, roles map[string]bool, id int) error {
 	}
 
 	rows, err = db.Query("SELECT childid FROM user_inheritance WHERE parentid = ?", id)
+	if err != nil {
+		return err
+	}
 	for rows.Next() {
 		var childId int
 		err = rows.Scan(&childId)
@@ -126,10 +109,6 @@ func getRoles(seen map[int]bool, roles map[string]bool, id int) error {
 }
 
 func GetRoles(username string) (map[string]bool, error) {
-	if mockUsername != "" && username == mockUsername {
-		return mockRoles, nil
-	}
-
 	seen := make(map[int]bool)
 	roles := make(map[string]bool)
 
@@ -190,9 +169,4 @@ func PrintUsers() error {
 	}
 
 	return nil
-}
-
-func SetMockUser(name string, roles map[string]bool) {
-	mockUsername = name
-	mockRoles = roles
 }
