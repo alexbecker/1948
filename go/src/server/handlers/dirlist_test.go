@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"server/testingutils"
 	"testing"
 )
 
@@ -32,12 +33,5 @@ func TestListing(t *testing.T) {
 	request := httptest.NewRequest("GET", "/", nil)
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, request)
-	if response.Code != 200 {
-		t.Errorf("Response code %d != 200", response.Code)
-	}
-	responseString := response.Body.String()
-	expectedResponseString := `["/a","/b","/b/c"]`
-	if responseString != expectedResponseString {
-		t.Errorf("Response %s != %s", responseString, expectedResponseString)
-	}
+	testingutils.ExpectSuccess(t, http.StatusOK, `["/a","/b","/b/c"]`, response)
 }
