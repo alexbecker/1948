@@ -53,13 +53,18 @@ func DecodeCookie(cookie *http.Cookie) (string, error) {
 	return value, nil
 }
 
-func SetAuthCookie(w http.ResponseWriter, username string) {
+func AuthCookie(username string) http.Cookie {
 	cookie := http.Cookie{
 		Name:   "auth",
 		Value:  username,
 		Secure: false,
 	}
 	SignCookie(&cookie)
+	return cookie
+}
+
+func SetAuthCookie(w http.ResponseWriter, username string) {
+	cookie := AuthCookie(username)
 	http.SetCookie(w, &cookie)
 }
 
