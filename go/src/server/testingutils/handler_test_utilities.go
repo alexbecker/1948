@@ -5,18 +5,16 @@ import (
 	"testing"
 )
 
-func ExpectSuccess(t *testing.T, code int, content string, response *httptest.ResponseRecorder) {
+func ExpectResponse(t *testing.T, code int, content string, response *httptest.ResponseRecorder) {
 	if response.Code != code {
 		t.Errorf("Response code %d != %d", response.Code, code)
+	}
+	encoding := response.Header().Get("Content-Encoding")
+	if encoding != "" {
+		t.Errorf("Unexpected encoded response (%s)", encoding)
 	}
 	responseString := response.Body.String()
 	if responseString != content {
 		t.Errorf("Response %s != %s", responseString, content)
-	}
-}
-
-func ExpectFailure(t *testing.T, code int, response *httptest.ResponseRecorder) {
-	if response.Code != code {
-		t.Errorf("Response code %d != %d", response.Code, code)
 	}
 }

@@ -51,27 +51,27 @@ func TestAuthFailures(t *testing.T) {
 	request := httptest.NewRequest("GET", "/uploads.html", nil)
 	response := httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectFailure(t, http.StatusUnauthorized, response)
+	testingutils.ExpectResponse(t, http.StatusUnauthorized, "", response)
 
 	request = httptest.NewRequest("GET", "/uploads", nil)
 	response = httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectFailure(t, http.StatusUnauthorized, response)
+	testingutils.ExpectResponse(t, http.StatusUnauthorized, "", response)
 
 	request = httptest.NewRequest("GET", "/uploads/a", nil)
 	response = httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectFailure(t, http.StatusUnauthorized, response)
+	testingutils.ExpectResponse(t, http.StatusUnauthorized, "", response)
 
 	request = httptest.NewRequest("POST", "/uploads/", nil)
 	response = httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectFailure(t, http.StatusUnauthorized, response)
+	testingutils.ExpectResponse(t, http.StatusUnauthorized, "", response)
 
 	request = httptest.NewRequest("DELETE", "/uploads/a", nil)
 	response = httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectFailure(t, http.StatusUnauthorized, response)
+	testingutils.ExpectResponse(t, http.StatusUnauthorized, "", response)
 }
 
 func TestHappyPath(t *testing.T) {
@@ -82,13 +82,13 @@ func TestHappyPath(t *testing.T) {
 	request.AddCookie(&authCookie)
 	response := httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectSuccess(t, http.StatusOK, "test", response)
+	testingutils.ExpectResponse(t, http.StatusOK, "test", response)
 
 	request = httptest.NewRequest("GET", "/uploads", nil)
 	request.AddCookie(&authCookie)
 	response = httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectSuccess(t, http.StatusOK, `["/tmp.html"]`, response)
+	testingutils.ExpectResponse(t, http.StatusOK, `["/tmp.html"]`, response)
 
 	request = httptest.NewRequest("POST", "/uploads/", strings.NewReader(`Content-Type: multipart/form-data; boundary=---------------------------18452080271361591831786946236
 Content-Length: 23
@@ -103,19 +103,19 @@ content
 	request.AddCookie(&authCookie)
 	response = httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectSuccess(t, http.StatusCreated, "File /test created", response)
+	testingutils.ExpectResponse(t, http.StatusCreated, "File /test created", response)
 
 	request = httptest.NewRequest("GET", "/uploads", nil)
 	request.AddCookie(&authCookie)
 	response = httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectSuccess(t, http.StatusOK, `["/test","/tmp.html"]`, response)
+	testingutils.ExpectResponse(t, http.StatusOK, `["/test","/tmp.html"]`, response)
 
 	request = httptest.NewRequest("GET", "/uploads/test", nil)
 	request.AddCookie(&authCookie)
 	response = httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectSuccess(t, http.StatusOK, "content", response)
+	testingutils.ExpectResponse(t, http.StatusOK, "content", response)
 
 	request = httptest.NewRequest("POST", "/uploads/", strings.NewReader(`Content-Type: multipart/form-data; boundary=---------------------------18452080271361591831786946236
 Content-Length: 24
@@ -130,17 +130,17 @@ content2
 	request.AddCookie(&authCookie)
 	response = httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectSuccess(t, http.StatusCreated, "File /test created", response)
+	testingutils.ExpectResponse(t, http.StatusCreated, "File /test created", response)
 
 	request = httptest.NewRequest("GET", "/uploads/test", nil)
 	request.AddCookie(&authCookie)
 	response = httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectSuccess(t, http.StatusOK, "content2", response)
+	testingutils.ExpectResponse(t, http.StatusOK, "content2", response)
 
 	request = httptest.NewRequest("DELETE", "/uploads/test", nil)
 	request.AddCookie(&authCookie)
 	response = httptest.NewRecorder()
 	mux.ServeHTTP(response, request)
-	testingutils.ExpectSuccess(t, http.StatusNoContent, "", response)
+	testingutils.ExpectResponse(t, http.StatusNoContent, "", response)
 }

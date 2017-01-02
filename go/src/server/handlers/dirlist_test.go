@@ -33,5 +33,5 @@ func TestListing(t *testing.T) {
 	request := httptest.NewRequest("GET", "/", nil)
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, request)
-	testingutils.ExpectSuccess(t, http.StatusOK, `["/a","/b","/b/c"]`, response)
+	testingutils.ExpectResponse(t, http.StatusOK, `["/a","/b","/b/c"]`, response)
 }

@@ -31,7 +31,7 @@ func TestServeEncFilesNoAccept(t *testing.T) {
 	request := httptest.NewRequest("GET", "/tmp.html", nil)
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, request)
-	testingutils.ExpectSuccess(t, 200, "test", response)
+	testingutils.ExpectResponse(t, http.StatusOK, "test", response)
 }
 
 func TestServeEncFilesAcceptFallback(t *testing.T) {
@@ -39,7 +39,7 @@ func TestServeEncFilesAcceptFallback(t *testing.T) {
 	request.Header.Set("Accept-Encoding", "gzip")
 	response := httptest.NewRecorder()
 	handler.ServeHTTP(response, request)
-	testingutils.ExpectSuccess(t, 200, "test", response)
+	testingutils.ExpectResponse(t, http.StatusOK, "test", response)
 }
 
 func TestServeEncFilesAcceptGzip(t *testing.T) {
@@ -61,4 +61,11 @@ func TestServeEncFilesAcceptGzip(t *testing.T) {
 	if string(content) != "test2" {
 		t.Errorf("Response %s != test2", content)
 	}
+}
+
+func TestNotFound(t *testing.T) {
+	request := httptest.NewRequest("GET", "/404", nil)
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response, request)
+	testingutils.ExpectResponse(t, http.StatusNotFound, "404 page not found\n", response)
 }
