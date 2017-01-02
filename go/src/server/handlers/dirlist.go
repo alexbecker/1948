@@ -1,13 +1,14 @@
 package handlers
 
 import (
-	"server/middleware"
 	"encoding/json"
 	"net/http"
 	"os"
 	"path/filepath"
+	"server/middleware"
 )
 
+// Handler which responds with a JSON array of all file names in baseFilepath and its subdirectories.
 func DirListHandler(baseFilepath http.Dir) http.Handler {
 	return middleware.LoggedHandler(func(w http.ResponseWriter, req *http.Request) error {
 		contents := make([]string, 0, 10)
