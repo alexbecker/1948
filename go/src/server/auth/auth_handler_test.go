@@ -28,6 +28,22 @@ func expectPasswordLookup(username string) {
 		WillReturnRows(rows)
 }
 
+func expectRoleLookup(username string) {
+	roles := sqlmock.NewRows([]string{"role"})
+	if username == "user" {
+		roles.AddRow("role")
+	}
+	mockDB.ExpectQuery("SELECT rowid FROM users WHERE username = ?").
+		WithArgs(username).
+		WillReturnRows(sqlmock.NewRows([]string{"rowid"}).AddRow(1))
+	mockDB.ExpectQuery("SELECT role FROM user_roles WHERE userid = ?").
+		WithArgs(1).
+		WillReturnRows(roles)
+	mockDB.ExpectQuery("SELECT childid FROM user_inheritance WHERE parentid = ?").
+		WithArgs(1).
+		WillReturnRows(sqlmock.NewRows([]string{"childid"}))
+}
+
 func checkSqlExpectations(t *testing.T) {
 	err := mockDB.ExpectationsWereMet()
 	if err != nil {
@@ -86,4 +102,50 @@ func TestMissingUser(t *testing.T) {
 	if len(response.Result().Cookies()) > 0 {
 		t.Errorf("Unexpected cookie set")
 	}
+}
+
+func TestAuthCookieAccepted(t *testing.T) {
+	request := httptest.NewRequest("GET", "/", nil)
+	authCookie := AuthCookie("user")
+	request.AddCookie(&authCookie)
+	response := httptest.NewRecorder()
+	expectRoleLookup("user")
+	handler.ServeHTTP(response, request)
+	checkSqlExpectations(t)
+	testingutils.ExpectResponse(t, http.StatusNotFound, "404 page not found\n", response)
+}
+
+func TestAuthCookieUnsigned(t *testing.T) {
+	request := httptest.NewRequest("GET", "/", nil)
+	authCookie := http.Cookie{
+		Name:  "auth",
+		Value: "user",
+	}
+	request.AddCookie(&authCookie)
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response, request)
+	testingutils.ExpectResponse(t, http.StatusUnauthorized, "", response)
+}
+
+func TestAuthCookieBogusSignature(t *testing.T) {
+	request := httptest.NewRequest("GET", "/", nil)
+	authCookie := http.Cookie{
+		Name:  "auth",
+		Value: "user.aaaaaaaaaaaaaaaaaaa",
+	}
+	request.AddCookie(&authCookie)
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response, request)
+	testingutils.ExpectResponse(t, http.StatusUnauthorized, "", response)
+}
+
+func TestAuthCookieWrongRole(t *testing.T) {
+	request := httptest.NewRequest("GET", "/", nil)
+	authCookie := AuthCookie("user2")
+	request.AddCookie(&authCookie)
+	response := httptest.NewRecorder()
+	expectRoleLookup("user2")
+	handler.ServeHTTP(response, request)
+	checkSqlExpectations(t)
+	testingutils.ExpectResponse(t, http.StatusForbidden, "403 forbidden\n", response)
 }
