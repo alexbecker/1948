@@ -1,4 +1,5 @@
 local
+plugins
 static
 go/bin
 go/pkg

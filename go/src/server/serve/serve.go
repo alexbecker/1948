@@ -1,11 +1,11 @@
 package serve
 
 import (
+	"local"
 	"log"
 	"net/http"
 	"os"
 	"server/handlers"
-	"server/local"
 	"server/middleware"
 )
 

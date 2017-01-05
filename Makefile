@@ -1,8 +1,10 @@
-all: go/bin/server static local
+all: go/bin/server static local plugins/*
 
-GOSRCS=go/src/server/main.go $(wildcard go/src/server/**/*.go)
+GOSRCS=go/src/server/main.go $(wildcard go/src/server/**/*.go) $(wildcard local/go/src/*.go) $(wildcard plugins/*/go/src/**/*.go)
+space=$(eval) $(eval)
+GOPATHS=$(subst $(space),:,$(abspath go local/go $(wildcard plugins/*/go)))
 go/bin/server: $(GOSRCS)
-	GOPATH="$$GOPATH:$$(pwd)/go" go install -v server
+	GOPATH="$$GOPATH:$(GOPATHS)" go install -v server
 
 .PHONY: static
 static:
@@ -11,3 +13,4 @@ static:
 	find static/ -regex ".*\.\(html\|css\|js\)" | xargs gzip -fk9
 
 include local/Makefile
+include $(wildcard plugins/*/Makefile)

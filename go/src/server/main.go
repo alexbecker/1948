@@ -1,20 +1,23 @@
 package main
 
 import (
-	"server/auth"
-	"server/serve"
 	"os"
+	"server/commands"
+	"server/serve"
 )
+
+func init() {
+	commands.Commands["serve"] = func(_ ...string) {
+		serve.Serve()
+	}
+}
 
 func main() {
 	command := os.Args[1]
-
-	switch command {
-	case "serve":
-		serve.Serve()
-	case "users":
-		auth.Manage(os.Args[2], os.Args[3:]...)
-	default:
-		panic("Command must be one of \"serve\" or \"users\"")
+	f, ok := commands.Commands[command]
+	if ok {
+		f(os.Args[2:]...)
+	} else {
+		panic("Command not recognized.")
 	}
 }
