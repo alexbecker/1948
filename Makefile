@@ -10,7 +10,12 @@ go/bin/server: $(GOSRCS)
 static:
 	mkdir -p static
 	python compile_templates.py
-	find static/ -regex ".*\.\(html\|css\|js\)" | xargs gzip -fk9
+
+COMPRESSIBLE=$(wildcard static/*.html) $(wildcard static/*.css) $(wildcard static/*.js) $(wildcard static/**/*.html) $(wildcard static/**/*.css) $(wildcard static/**/*.js)
+gz: $(addsuffix .gz,$(COMPRESSIBLE))
+
+%.gz: %
+	gzip -fk9 $<
 
 include local/Makefile
 include $(wildcard plugins/*/Makefile)
