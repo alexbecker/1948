@@ -12,6 +12,7 @@ static:
 	python compile_templates.py
 
 COMPRESSIBLE=$(wildcard static/*.html) $(wildcard static/*.css) $(wildcard static/*.js) $(wildcard static/**/*.html) $(wildcard static/**/*.css) $(wildcard static/**/*.js)
+.PHONY: gz
 gz: $(addsuffix .gz,$(COMPRESSIBLE))
 
 %.gz: %
