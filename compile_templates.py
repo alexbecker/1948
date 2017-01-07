@@ -1,4 +1,4 @@
-from local.template_conf import CONF
+from local.template_conf import CONF, default_extensions
 
 import os
 import jinja2
@@ -29,6 +29,15 @@ def conditional_write(path, content):
         outfile.write(content)
 
 
+default_extensions |= {
+        ".html", ".css", ".js",
+        ".eot", ".ttf", ".woff", ".woff2",
+        ".png", ".jpg", ".jpeg", ".gif", ".bmp",
+        ".mp3", ".mp4", ".mpeg", ".flac",
+        ".webm", ".avi", ".wmv", ".mov", ".qt", ".flv",
+}
+
+
 def compile_templates():
     template_path = "local/templates"
     loader = TrackedLoader(template_path)
@@ -45,10 +54,11 @@ def compile_templates():
 
         conditional_write(path, output)
 
-    # Copy any files not used in templates to static/, verbatim.
+    # Copy any files with default extensions not used in templates to static/, verbatim.
     for dirpath, _, filenames in os.walk(template_path):
         for filename in filenames:
-            if filename not in loader.names_loaded:
+            _, ext = os.path.splitext(filename)
+            if ext in default_extensions and filename not in loader.names_loaded:
                 src = os.path.join(dirpath, filename)
                 dst = os.path.join("static", os.path.relpath(dirpath, template_path), filename)
                 shutil.copy2(src, dst)
