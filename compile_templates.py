@@ -11,9 +11,9 @@ class TrackedLoader(jinja2.FileSystemLoader):
         self.names_loaded = set()
         super().__init__(*args, **kwargs)
 
-    def load(environment, name, **kwargs):
+    def load(self, environment, name, *args, **kwargs):
         self.names_loaded.add(name)
-        return super().load(environment, name, **kwargs)
+        return super().load(environment, name, *args, **kwargs)
 
 
 def conditional_write(path, content):
@@ -57,10 +57,16 @@ def compile_templates():
     # Copy any files with default extensions not used in templates to static/, verbatim.
     for dirpath, _, filenames in os.walk(template_path):
         for filename in filenames:
+            relsrc = os.path.join(os.path.relpath(dirpath, template_path), filename)
+            if relsrc.startswith("./"):
+                relsrc = relsrc[2:]
             _, ext = os.path.splitext(filename)
-            if ext in default_extensions and filename not in loader.names_loaded:
+            if ext in default_extensions and relsrc not in loader.names_loaded:
+                dstdir = os.path.join("static", os.path.relpath(dirpath, template_path))
+                if not os.path.exists(dstdir):
+                    os.makedirs(dstdir)
                 src = os.path.join(dirpath, filename)
-                dst = os.path.join("static", os.path.relpath(dirpath, template_path), filename)
+                dst = os.path.join(dstdir, filename)
                 shutil.copy2(src, dst)
 
 
