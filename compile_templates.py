@@ -35,6 +35,7 @@ default_extensions |= {
         ".png", ".jpg", ".jpeg", ".gif", ".bmp",
         ".mp3", ".mp4", ".mpeg", ".flac",
         ".webm", ".avi", ".wmv", ".mov", ".qt", ".flv",
+        ".txt", ".tex", ".pdf",
 }
 
 
