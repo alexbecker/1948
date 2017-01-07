@@ -1,6 +1,4 @@
 #! /bin/bash
-source local/env.sh
-
 [[ $HOST =~ localhost ]] && DST=$DIR || DST="$HOST:$DIR"
 rsync -a go/bin/server $DST
 rsync -a static $DST
