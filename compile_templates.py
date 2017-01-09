@@ -32,7 +32,7 @@ def conditional_write(path, content):
 default_extensions |= {
         ".html", ".css", ".js",
         ".eot", ".ttf", ".woff", ".woff2",
-        ".png", ".jpg", ".jpeg", ".gif", ".bmp",
+        ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico",
         ".mp3", ".mp4", ".mpeg", ".flac",
         ".webm", ".avi", ".wmv", ".mov", ".qt", ".flv",
         ".txt", ".tex", ".pdf",
