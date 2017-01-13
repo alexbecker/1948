@@ -1,4 +1,5 @@
 local
+!skeleton/go/src/local
 plugins
 static
 go/bin
