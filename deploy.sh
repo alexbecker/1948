@@ -9,4 +9,3 @@ for p in $(ls plugins); do
         rsync -a --relative "plugins/$p/server_side/" $DST
     fi
 done
-rsync -a install_server.sh $DST
