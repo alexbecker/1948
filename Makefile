@@ -18,6 +18,9 @@ GOPATHS=$(subst $(space),:,$(abspath go local/go $(wildcard plugins/*/go)))
 go/bin/server: $(GOSRCS)
 	GOPATH="$$GOPATH:$(GOPATHS)" go install -v server
 
+gotest: $(GOSRCS)
+	GOPATH="$$GOPATH:$(GOPATHS)" go test -v ./...
+
 .PHONY: static
 static: $(STATIC_DEPS)
 	mkdir -p static
