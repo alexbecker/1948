@@ -24,6 +24,14 @@ func (w *loggedResponseWriter) WriteHeader(code int) {
 	w.ResponseWriter.WriteHeader(code)
 }
 
+func (w *loggedResponseWriter) Write(p []byte) (int, error) {
+	// If WriteHeader hasn't been called, the status is implicitly set to 200 OK.
+	if w.status == 0 {
+		w.status = http.StatusOK
+	}
+	return w.ResponseWriter.Write(p)
+}
+
 type LoggedHandler func(http.ResponseWriter, *http.Request) error
 
 func Handle500(w http.ResponseWriter, err error) {
