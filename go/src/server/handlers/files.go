@@ -33,6 +33,11 @@ func serveFile(w http.ResponseWriter, req *http.Request, filename, encoding, mim
 		}
 		return true
 	}
+	if stats.IsDir() {
+		http.Error(w, "404 page not found", http.StatusNotFound)
+		return true
+	}
+
 	file, err := os.Open(filename)
 	if err != nil {
 		middleware.Handle500(w, err)

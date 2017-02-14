@@ -69,3 +69,10 @@ func TestNotFound(t *testing.T) {
 	handler.ServeHTTP(response, request)
 	testingutils.ExpectResponse(t, http.StatusNotFound, "404 page not found\n", response)
 }
+
+func TestNotServeDirectory(t *testing.T) {
+	request := httptest.NewRequest("GET", "/", nil)
+	response := httptest.NewRecorder()
+	handler.ServeHTTP(response, request)
+	testingutils.ExpectResponse(t, http.StatusNotFound, "404 page not found\n", response)
+}
