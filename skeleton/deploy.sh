@@ -1,5 +1,5 @@
 #! /bin/bash
-[[ $HOST =~ localhost ]] && DST=$DIR || DST="$HOST:$DIR"
+[[ $DEPLOY_ADDR =~ localhost ]] && DST=$DIR || DST="$DEPLOY_ADDR:$DIR"
 cd local
 for p in $(ls plugins); do
     if [[ -e "plugins/$p/server_side" ]]; then

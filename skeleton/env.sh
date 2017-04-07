@@ -2,6 +2,8 @@ export DATABASE=database.db
 export PORT_HTTP=80
 # Remove this line to serve HTTP-only
 export PORT_HTTPS=443
+# Address to deploy the server to (often same as host)
+export DEPLOY_ADDR=
 # Host from which the site is served
 export HOST=
 # Salt used to hash passwords; should be unique

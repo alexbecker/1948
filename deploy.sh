@@ -1,5 +1,5 @@
 #! /bin/bash
-[[ $HOST =~ localhost ]] && DST=$DIR || DST="$HOST:$DIR"
+[[ $DEPLOY_ADDR =~ localhost ]] && DST=$DIR || DST="$DEPLOY_ADDR:$DIR"
 rsync -a go/bin/server $DST
 rsync -a static $DST
 rsync -a local/env.sh $DST
