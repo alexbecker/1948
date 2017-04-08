@@ -4,8 +4,8 @@ export PORT_HTTP=80
 export PORT_HTTPS=443
 # Address to deploy the server to (often same as host)
 export DEPLOY_ADDR=
-# Host from which the site is served
-export HOST=
+# Hosts from which the site is served (comma-separated)
+export HOSTS=
 # Salt used to hash passwords; should be unique
 export SALT=
 # Secret used to sign authentication cookies

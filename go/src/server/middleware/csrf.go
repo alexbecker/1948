@@ -3,14 +3,15 @@ package middleware
 import (
 	"net/url"
 	"os"
+	"strings"
 )
 
 var (
-	host string
+	hosts []string
 )
 
 func init() {
-	host = os.Getenv("HOST")
+	hosts = strings.Split(os.Getenv("HOSTS"), ",")
 }
 
 func IsSafeMethod(method string) bool {
@@ -23,5 +24,13 @@ func CheckReferer(referer string) bool {
 	}
 
 	parsed, err := url.ParseRequestURI(referer)
-	return (err == nil && parsed.Host == host)
+	if err != nil {
+		return false
+	}
+	for i := 0; i < len(hosts); i++ {
+		if hosts[i] == parsed.Host {
+			return true
+		}
+	}
+	return false
 }
