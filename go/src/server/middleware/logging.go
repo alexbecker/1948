@@ -9,7 +9,7 @@ import (
 var InfoLogger, ErrLogger *log.Logger
 
 func init() {
-	InfoLogger = log.New(os.Stdin, "INFO: ", log.LstdFlags|log.LUTC)
+	InfoLogger = log.New(os.Stderr, "INFO: ", log.LstdFlags|log.LUTC)
 	ErrLogger = log.New(os.Stderr, "ERR: ", log.LstdFlags|log.LUTC)
 }
 
