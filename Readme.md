@@ -68,4 +68,3 @@ conventially via a script at `plugins/<plugin_dir>/server_side/install.sh`.
 
  * Plugin management infrastructure.
  * Story for handling upgrades, since install scripts are intended for fresh installations.
- * Once Go 1.8 is released, use the new `tls.Config.GetClientCertificate` for hot-reloading certificates.
