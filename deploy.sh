@@ -1,7 +1,10 @@
 #! /bin/bash
+set -e
 [[ $DEPLOY_ADDR =~ localhost ]] && DST=$DIR || DST="$DEPLOY_ADDR:$DIR"
-rsync -a go/bin/server $DST
-rsync -a static $DST
-rsync -a local/env.sh $DST
-rsync -a local/server_side/ $DST
-/bin/bash local/deploy.sh
+echo "Deploying to $DST"
+cd local
+rsync -a server $DST
+rsync -a env.sh $DST
+rsync -a server_side/ $DST
+rsync -a --delete-after static $DST
+exec ./deploy.sh

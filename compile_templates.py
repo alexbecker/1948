@@ -4,6 +4,8 @@ import os
 import jinja2
 import shutil
 
+STATIC_PATH = "local/static"
+
 
 class TrackedLoader(jinja2.FileSystemLoader):
     """Template loader that tracks which files are actually loaded."""
@@ -48,7 +50,7 @@ def compile_templates():
     for name, local in CONF['pages'].items():
         output = env.get_template(name).render(current=name, local=local)
 
-        path = os.path.join("static", name)
+        path = os.path.join(STATIC_PATH, name)
         directory = os.path.dirname(path)
         if not os.path.exists(directory):
             os.makedirs(directory)
@@ -63,7 +65,7 @@ def compile_templates():
                 relsrc = relsrc[2:]
             _, ext = os.path.splitext(filename)
             if ext in default_extensions and relsrc not in loader.names_loaded:
-                dstdir = os.path.join("static", os.path.relpath(dirpath, template_path))
+                dstdir = os.path.join(STATIC_PATH, os.path.relpath(dirpath, template_path))
                 if not os.path.exists(dstdir):
                     os.makedirs(dstdir)
                 src = os.path.join(dirpath, filename)
