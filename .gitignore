@@ -1,5 +1,4 @@
 local
 !skeleton/go/src/local
-static
 go/bin
 go/pkg

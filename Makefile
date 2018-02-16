@@ -26,7 +26,7 @@ local/server: $(GOSRCS)
 gotest: $(GOSRCS)
 	GOPATH="$$GOPATH:$(GOPATHS)" go test -v ./...
 
-.PHONY: static
+.PHONY: local/static
 local/static: $(STATIC_DEPS)
 	mkdir -p local/static
 	python compile_templates.py
