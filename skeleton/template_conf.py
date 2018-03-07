@@ -1,5 +1,11 @@
-CONF = {
+from templating.loader import TrackedLoader
+from templating.compiler import default_extensions
+
+
+config = {
     'pages': {}
 }
 
-default_extensions = set()
+extensions_to_copy = default_extensions
+
+loader = TrackedLoader("local/templates")
