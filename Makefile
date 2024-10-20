@@ -16,14 +16,14 @@ gz: $(addsuffix .gz,$(COMPRESSIBLE))
 
 include local/Makefile
 
-GOSRCS=go/src/server/main.go $(wildcard go/src/server/**/*.go) $(wildcard local/go/src/**/*.go) $(wildcard local/plugins/*/go/src/**/*.go)
+GOSRCS=$(wildcard local/**/*.go) $(wildcard local/plugins/**/*.go)
 space=$(eval) $(eval)
 GOPATHS=$(subst $(space),:,$(abspath go local/go $(wildcard local/plugins/*/go)))
 local/server: $(GOSRCS)
-	GOPATH="$$GOPATH:$(GOPATHS)" go install -v server
-	cp go/bin/server local/server
+	GOPATH="$$GOPATH:$(GOPATHS)" cd server; go build -o ../local/server
 
 gotest: $(GOSRCS)
+	cd server
 	GOPATH="$$GOPATH:$(GOPATHS)" go test -v ./...
 
 .PHONY: local/static

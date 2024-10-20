@@ -2,13 +2,13 @@ package serve
 
 import (
 	"crypto/tls"
+	"github.com/alexbecker/1948/handlers"
+	"github.com/alexbecker/1948/middleware"
 	"local"
 	"log"
 	"net/http"
 	"os"
 	"reflect"
-	"server/handlers"
-	"server/middleware"
 	"time"
 )
 

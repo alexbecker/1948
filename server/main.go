@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/alexbecker/1948/commands"
+	"github.com/alexbecker/1948/serve"
 	"os"
-	"server/commands"
-	"server/serve"
 )
 
 func init() {

@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"github.com/alexbecker/1948/middleware"
 	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
-	"server/middleware"
 	"strings"
 )
 

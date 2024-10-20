@@ -2,12 +2,12 @@ package handlers
 
 import (
 	"compress/gzip"
+	"github.com/alexbecker/1948/testingutils"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
-	"server/testingutils"
 	"testing"
 )
 
