@@ -16,7 +16,7 @@ gz: $(addsuffix .gz,$(COMPRESSIBLE))
 
 include local/Makefile
 
-GOSRCS=$(wildcard local/**/*.go) $(wildcard local/plugins/**/*.go)
+GOSRCS=$(wildcard local/go/local/*.go) $(wildcard local/plugins/**/*.go)
 space=$(eval) $(eval)
 GOPATHS=$(subst $(space),:,$(abspath go local/go $(wildcard local/plugins/*/go)))
 local/server: $(GOSRCS)
