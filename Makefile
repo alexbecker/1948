@@ -20,7 +20,7 @@ GOSRCS=$(wildcard local/**/*.go) $(wildcard local/plugins/**/*.go)
 space=$(eval) $(eval)
 GOPATHS=$(subst $(space),:,$(abspath go local/go $(wildcard local/plugins/*/go)))
 local/server: $(GOSRCS)
-	GOPATH="$$GOPATH:$(GOPATHS)" cd server; go build -o ../local/server
+	GOPATH="$$GOPATH:$(GOPATHS)" CGO_ENABLED=0 cd server; go build -o ../local/server
 
 gotest: $(GOSRCS)
 	cd server
