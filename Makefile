@@ -7,7 +7,8 @@ COMPRESSIBLE=$(wildcard local/static/*.html) \
 			 $(wildcard local/static/*.js) \
 			 $(wildcard local/static/**/*.html) \
 			 $(wildcard local/static/**/*.css) \
-			 $(wildcard local/static/**/*.js)
+			 $(wildcard local/static/**/*.js) \
+			 $(wildcard local/static/**/*.svg)
 .PHONY: gz
 gz: $(addsuffix .gz,$(COMPRESSIBLE))
 
