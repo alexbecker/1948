@@ -16,7 +16,7 @@ func makeServeMux() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		if req.URL.Path == "/" || req.URL.Path == local.Index || req.URL.Path == "/index.html" {
+		if req.URL.Path == "/" || (req.URL.Path == "/index.html" && local.Index != "/index.html") {
 			req.URL.Path = local.Index
 			mux.ServeHTTP(w, req)
 		} else {
